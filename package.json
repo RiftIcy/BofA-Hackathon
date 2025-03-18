@@ -1,0 +1,24 @@
+{
+  "name": "bofa-hackathon",
+  "version": "1.0.0",
+  "description": "This is a project created for the Bank of America 2nd annual hackathon",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RiftIcy/BofA-Hackathon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RiftIcy/BofA-Hackathon/issues"
+  },
+  "homepage": "https://github.com/RiftIcy/BofA-Hackathon#readme",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}
