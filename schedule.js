@@ -3,7 +3,7 @@ const cron = require('node-cron');
 class Class {
     // Stores all the data for the classes  
     constructor(className, building, startTime, days, reminder, reminderTime) {
-        this.class = className;
+        this.className = className;
         this.building = building;
         this.startTime = startTime; // Format: HH:MM (AM/PM)
         
@@ -33,7 +33,7 @@ class Class {
 let schedules = [
     new Class("Math 101", "CKB", "8:30 AM", ["Mon", "Wed", "Fri"], false),
     new Class("Physics 101", "Building B", "5:00 PM", ["Tue", "Thu"], true, 3),
-    new Class("CS 101", "Building C", "5:05 PM", ["Tue", "Thu"], true, 10)
+    new Class("CS 101", "Building C", "9:35 PM", ["Tue", "Thu"], true, 8)
 ];
 
 function checkReminders() {
@@ -82,7 +82,7 @@ function checkReminders() {
 
 function giveReminder(schedule, minutesBeforeClass) {
     //If the check for reminder works then send the reminder
-    console.log(`Reminder for class ${schedule.class}: Class starts in ${minutesBeforeClass} minutes at ${schedule.startTime}`);
+    console.log(`Reminder for class ${schedule.className}: Class starts in ${minutesBeforeClass} minutes at ${schedule.startTime}`);
 }
 
 // Runs the code every 5 minutes
