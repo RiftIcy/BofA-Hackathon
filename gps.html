@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox GeoJSON Points with GPS</title>
+    <!-- Include Mapbox GL CSS -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <style>
+        /* Make sure the map fills the entire page */
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWxwZXNjYWQiLCJhIjoiY204Zjk4MTJ6MGFidjJpcHZrb3V1ejIzayJ9.t1zYkNwgZEkO1L0zC2CY_Q'; // Replace with your Mapbox access token
+
+        // Initialize the map
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11', // Style of the map
+            center: [-74.1785, 40.7416], // Initial center of the map near your points
+            zoom: 15, // Zoom level
+        });
+
+        // GeoJSON data (provided by you)
+        const geojsonData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Faculty Memorial Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17882320768487, 40.741919572358164]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Tiernan Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17963687210279, 40.74181433840874]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Electrical and Computer Engineering Center"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17873907313087, 40.74132076321973]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Kupfrian Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17842206122391, 40.74258844551209]
+                    }
+                }
+            ]
+        };
+
+        // Add the GeoJSON data to the map
+        map.on('load', function () {
+            // Add a GeoJSON source
+            map.addSource('buildings', {
+                type: 'geojson',
+                data: geojsonData // Add the GeoJSON data directly
+            });
+
+            // Add a layer to display the points as circle markers
+            map.addLayer({
+                'id': 'building-markers',
+                'type': 'circle',
+                'source': 'buildings',
+                'paint': {
+                    'circle-radius': 8, // Size of the circle
+                    'circle-color': '#FF5733' // Color of the marker
+                }
+            });
+
+            // Optionally, add popups to show the location name when a user clicks on a marker
+            map.on('click', 'building-markers', function (e) {
+                var coordinates = e.features[0].geometry.coordinates;
+                var description = e.features[0].properties.location;
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML('<h3>' + description + '</h3>')
+                    .addTo(map);
+            });
+
+            // Change the cursor to a pointer when hovering over a marker
+            map.on('mouseenter', 'building-markers', function () {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            map.on('mouseleave', 'building-markers', function () {
+                map.getCanvas().style.cursor = '';
+            });
+
+            // Display the user's current GPS location as a marker
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const userLatitude = position.coords.latitude;
+                    const userLongitude = position.coords.longitude;
+
+                    // Center the map on the user's location
+                    map.setCenter([userLongitude, userLatitude]);
+
+                    // Zoom in closer to the user's location
+                    map.setZoom(15);
+
+                    // Add a marker for the user's location
+                    new mapboxgl.Marker({ color: 'blue' })
+                        .setLngLat([userLongitude, userLatitude])
+                        .addTo(map);
+                }, function(error) {
+                    console.error("Error getting location: ", error);
+                    alert("Unable to retrieve your location.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+    </script>
+</body>
+</html>
