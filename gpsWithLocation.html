@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox GeoJSON Points with GPS</title>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js"></script>
+    <script src="https://api.mapbox.com/mapbox-directions.js/v4.1.0/mapbox-directions.js"></script>
+    <link href="https://api.mapbox.com/mapbox-directions.js/v4.1.0/mapbox-directions.css" rel="stylesheet" />
+    <style>
+        #map {
+            height: 100vh;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWxwZXNjYWQiLCJhIjoiY204Zjk4MTJ6MGFidjJpcHZrb3V1ejIzayJ9.t1zYkNwgZEkO1L0zC2CY_Q'; // Replace with your Mapbox access token
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-74.1785, 40.7416],
+            zoom: 15
+        });
+
+        // GeoJSON data for buildings
+        const geojsonData = {
+            "type": "FeatureCollection",
+            "features": [
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Faculty Memorial Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17882320768487, 40.741919572358164]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Tiernan Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17963687210279, 40.74181433840874]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Electrical and Computer Engineering Center"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17873907313087, 40.74132076321973]
+                    }
+                },
+                {
+                    "type": "Feature",
+                    "properties": {
+                        "location": "Kupfrian Hall"
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [-74.17842206122391, 40.74258844551209]
+                    }
+                }
+            ]
+        };
+
+        let pathCoordinates = [];  // Array to hold the path coordinates
+        let currentDestination = null;  // Store the selected destination
+        let routeLayerId = 'user-route';  // Layer ID for the user path
+
+        map.on('load', function() {
+            // Add the GeoJSON data (points)
+            map.addSource('buildings', {
+                type: 'geojson',
+                data: geojsonData
+            });
+
+            // Add the points (markers) to the map
+            map.addLayer({
+                'id': 'building-markers',
+                'type': 'circle',
+                'source': 'buildings',
+                'paint': {
+                    'circle-radius': 8,
+                    'circle-color': '#FF5733'
+                }
+            });
+
+            // Add popups to show location names when a user clicks on a marker
+            map.on('click', 'building-markers', function(e) {
+                var coordinates = e.features[0].geometry.coordinates;
+                var description = e.features[0].properties.location;
+
+                // Set the selected destination
+                currentDestination = coordinates;
+
+                // Show a popup with the location name and message to start navigation
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML('<h3>' + description + '</h3><p>Tracking path...</p>')
+                    .addTo(map);
+
+                // Start tracking the path
+                if (currentDestination) {
+                    updateUserPath();
+                }
+            });
+
+            // Track the user's location and update the path
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(function(position) {
+                    const userLatitude = position.coords.latitude;
+                    const userLongitude = position.coords.longitude;
+
+                    // Update the user's position on the map
+                    if (map.getLayer('user-location')) {
+                        map.getSource('user-location').setData({
+                            type: 'Point',
+                            coordinates: [userLongitude, userLatitude]
+                        });
+                    } else {
+                        new mapboxgl.Marker({ color: 'blue' })
+                            .setLngLat([userLongitude, userLatitude])
+                            .setPopup(new mapboxgl.Popup().setHTML('You are here'))
+                            .addTo(map);
+                    }
+
+                    // Add the user's location to the path
+                    pathCoordinates.push([userLongitude, userLatitude]);
+
+                    // Update the path if there is a valid destination
+                    if (currentDestination) {
+                        updateUserPath();
+                    }
+
+                }, function(error) {
+                    console.error('Error getting location:', error);
+                    alert("Unable to retrieve your location.");
+                }, {
+                    enableHighAccuracy: true,
+                    maximumAge: 10000,
+                    timeout: 10000
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        });
+
+        // Function to update the path from the user's location to the selected destination
+        function updateUserPath() {
+            if (currentDestination) {
+                // Get user's current location (last coordinates in path)
+                const userLocation = pathCoordinates[pathCoordinates.length - 1];
+
+                // Fetch the route from user's location to the destination
+                const routeType = 'walking';
+                const url = `https://api.mapbox.com/directions/v5/mapbox/${routeType}/${userLocation[0]},${userLocation[1]};${currentDestination[0]},${currentDestination[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
+
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const route = data.routes[0].geometry;
+
+                        // Update or create the route layer on the map
+                        if (map.getLayer(routeLayerId)) {
+                            map.getSource(routeLayerId).setData({
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'LineString',
+                                    coordinates: route.coordinates
+                                }
+                            });
+                        } else {
+                            map.addLayer({
+                                id: routeLayerId,
+                                type: 'line',
+                                source: {
+                                    type: 'geojson',
+                                    data: {
+                                        type: 'Feature',
+                                        geometry: {
+                                            type: 'LineString',
+                                            coordinates: route.coordinates
+                                        }
+                                    }
+                                },
+                                paint: {
+                                    'line-color': '#007cbf',
+                                    'line-width': 5
+                                }
+                            });
+                        }
+                    })
+                    .catch(err => console.error('Error fetching directions:', err));
+            }
+        }
+    </script>
+</body>
+</html>
