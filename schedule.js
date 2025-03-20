@@ -18,7 +18,7 @@ class Class {
         this.reminder = reminder; // Format: true/false
 
         // If reminder is true, set reminderTime, otherwise set it to null
-        this.reminderTime = reminder ? reminderTime : null; //Format: 0, 5, 10, 15, 30, 1hr (in MINUTES)
+        this.reminderTime = reminder ? reminderTime : null; //Format: 5, 10, 15, 30, 1hr (in MINUTES)
 
         //Adjust 24-hour period
         if(this.timeofDay === "PM" && this.startTimeHour !== 12) {
@@ -33,7 +33,7 @@ class Class {
 let schedules = [
     new Class("Math 101", "CKB", "8:30 AM", ["Mon", "Wed", "Fri"], false),
     new Class("Physics 101", "Building B", "5:00 PM", ["Tue", "Thu"], true, 3),
-    new Class("CS 101", "Building C", "9:35 PM", ["Tue", "Thu"], true, 8)
+    new Class("CS 101", "Building C", "10:15 PM", ["Tue", "Thu"], true, 10)
 ];
 
 function checkReminders() {
@@ -86,7 +86,7 @@ function giveReminder(schedule, minutesBeforeClass) {
 }
 
 // Runs the code every 5 minutes
-cron.schedule('0/5 * * * 1-6', () => {
+cron.schedule('*/5 * * * 1-6', () => {
     checkReminders();
 }, 
 {
