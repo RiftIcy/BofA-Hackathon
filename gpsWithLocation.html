@@ -78,6 +78,7 @@
         let pathCoordinates = [];  // Array to hold the path coordinates
         let currentDestination = null;  // Store the selected destination
         let routeLayerId = 'user-route';  // Layer ID for the user path
+        let userMarker = null;  // Store the marker reference
 
         map.on('load', function() {
             // Add the GeoJSON data (points)
@@ -123,14 +124,12 @@
                     const userLatitude = position.coords.latitude;
                     const userLongitude = position.coords.longitude;
 
-                    // Update the user's position on the map
-                    if (map.getLayer('user-location')) {
-                        map.getSource('user-location').setData({
-                            type: 'Point',
-                            coordinates: [userLongitude, userLatitude]
-                        });
+                    // Create or update the user's location marker
+                    if (userMarker) {
+                        userMarker.setLngLat([userLongitude, userLatitude]);
                     } else {
-                        new mapboxgl.Marker({ color: 'blue' })
+                        // Create the marker if it doesn't exist yet
+                        userMarker = new mapboxgl.Marker({ color: 'blue' })
                             .setLngLat([userLongitude, userLatitude])
                             .setPopup(new mapboxgl.Popup().setHTML('You are here'))
                             .addTo(map);
@@ -148,9 +147,9 @@
                     console.error('Error getting location:', error);
                     alert("Unable to retrieve your location.");
                 }, {
-                    enableHighAccuracy: true,
-                    maximumAge: 10000,
-                    timeout: 10000
+                    enableHighAccuracy: true, // Enable high accuracy for GPS
+                    maximumAge: 0, // Prevent cached location data
+                    timeout: 5000 // Allow up to 5 seconds to get a better location
                 });
             } else {
                 alert("Geolocation is not supported by this browser.");
