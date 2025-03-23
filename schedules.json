@@ -1,0 +1,82 @@
+[
+  {
+    "className": "Math 101",
+    "building": "CKB",
+    "startTime": "8:30 AM",
+    "timeofDay": "AM",
+    "startTimeHour": 8,
+    "startTimeMinute": 30,
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "reminderTriggered": false,
+    "reminder": true,
+    "reminderTime": "15"
+  },
+  {
+    "className": "Math 101",
+    "building": "CKB",
+    "startTime": "8:30 AM",
+    "timeofDay": "AM",
+    "startTimeHour": 8,
+    "startTimeMinute": 30,
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "reminderTriggered": false,
+    "reminder": true,
+    "reminderTime": "15"
+  },
+  {
+    "className": "Math 101",
+    "building": "CKB",
+    "startTime": "8:30 AM",
+    "timeofDay": "AM",
+    "startTimeHour": 8,
+    "startTimeMinute": 30,
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "reminderTriggered": false,
+    "reminder": true,
+    "reminderTime": "10"
+  },
+  {
+    "className": "Math 101",
+    "building": "CKB",
+    "startTime": "8:30 AM",
+    "timeofDay": "AM",
+    "startTimeHour": 8,
+    "startTimeMinute": 30,
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "reminderTriggered": false,
+    "reminder": true,
+    "reminderTime": 10
+  },
+  {
+    "className": "Math 101",
+    "building": "CKB",
+    "startTime": "8:30 AM",
+    "timeofDay": "AM",
+    "startTimeHour": 8,
+    "startTimeMinute": 30,
+    "days": [
+      "Mon",
+      "Wed",
+      "Fri"
+    ],
+    "reminderTriggered": false,
+    "reminder": true,
+    "reminderTime": 5
+  }
+]

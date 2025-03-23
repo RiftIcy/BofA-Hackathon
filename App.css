@@ -1,0 +1,52 @@
+/* Updated App.css */
+.Home {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background: url('https://source.unsplash.com/1600x900/?cherry-blossom-tree') no-repeat center center fixed;
+  background-color: #f4f4f4;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #4c8bf5, #0033a0);
+  min-height: 1000vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.button {
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  width: 80%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
